@@ -1,0 +1,157 @@
+stack_get_nth :
+  stack_get_nth(3, 1^2^3^4^5, X).
+  --> X = 4.
+  stack_get_nth(1, 1^2^3^4^5, X).
+  --> X = 2.
+  stack_get_nth(0, 1^2^3^4^5, X).
+  --> X = 1.
+
+stack_set_nth :
+  stack_set_nth(3, 9, 1^2^3^4^5, X).
+  --> X = 1^2^3^9^5.
+  stack_set_nth(1, 9, 1^2^3^4^5, X).
+  --> X = 1^9^3^4^5.
+  stack_set_nth(0, 9, 1^2^3^4^5, X).
+  --> X = 9^2^3^4^5.
+
+typeof_val :
+  typeof_val(2^3^nil, X).
+  --> list(int).
+
+
+  typeof_val(true^false^nil, X).
+  --> list(bool).
+
+
+  typeof_val(nil, X). 
+  --> X = list(int) ? ;
+  --> X = list(bool) ? ;
+  ..etc
+
+  typeof_val([], (int->int)).
+  --> true.
+
+  typeof_val([], (int->X)).
+  --> X = int
+
+
+  typeof_val([], (X->X)).
+  --> X = int ? ;
+  --> X = bool ? ;
+  ..etc.
+
+  typeof_val([dup|dup], (int^int->int^int^int^int)).
+  --> true.
+
+typeof_op :
+  typeof_op(dup, (int->int)^T, X).
+  --> X =  (int->int)^(int->int)^T.
+
+  typeof_op(swap, int^bool^T, X).
+  --> X = bool^int^T.
+
+  typeof_op(pop, int^bool, X).
+  --> X = bool.
+
+  typeof_op(get(0), bool^int^int, X).
+  --> X = bool^bool^int^int.
+
+  typeof_op(get(2), int^int^bool, X).
+  --> X = bool^int^int^bool.
+
+  typeof_op(set(0), bool^int^int^int, X).
+  --> X = bool^int^int.
+
+  typeof_op(set(2), bool^int^int^int, X).
+  --> X = int^int^bool.
+
+  typeof_op(add, int^int^int, X).
+  --> X = int^int.
+
+  typeof_op(add, int^bool^int, X).
+  --> false.
+
+  typeof_op(if, bool^int^int^bool, X).
+  --> X = int^bool.
+
+  typeof_op(if, bool^bool^int^bool, X).
+  --> false.
+
+  typeof_op(cons, int^list(int)^bool, X).
+  --> X = list(int)^bool.
+
+  typeof_op(emptyp, list(int)^bool, X).
+  --> X = bool^bool.
+
+  typeof_op(car, list(int)^bool, X).
+  --> X = int^bool.
+
+  typeof_op(cdr, list(int)^bool, X).
+  --> X = list(int)^bool.
+
+  typeof_op(dup:int, int^int, X).
+  --> X = int^int^int
+
+  typeof_op(swap:int, int^int, X).
+  --> false.
+
+
+
+
+
+ test eval:
+
+
+ eval([add, add], 1^3^4^add^nil, X).
+ --> X = 8^add^nil
+
+ eval([dup], 1^nil, X).
+ --> X = 1^1^nil
+
+ eval([swap], 1^2^nil, X).
+ --> X = 2^1^nil
+
+ eval([pop], 1^2^nil, X).
+ --> X = 2^nil
+
+ eval([get(1)], 1^2^3^nil, X).
+ --> X = 2^1^2^3^nil
+
+ eval([set(0)], 1^2^nil, X).
+ --> X = 1^nil
+
+ eval([3, 4, 5], 1^2^nil, X).
+ --> X = 5^4^3^1^2^nil
+
+ eval([set(1)], 1^2^3^nil, X).
+ --> X = 2^1^nil
+
+ eval([if, add, false, if], true^2^3^4^20^nil, X).
+ --> X = 20^nil
+
+ eval([cons], 3^nil^nil, X).
+ --> X = (3^nil)^nil
+
+ eval([nil, emptyp], nil, X).
+ --> X = true^nil
+
+ eval([3^nil, car], nil,X).
+ --> X = 3^nil
+
+ eval([3^nil, cdr], nil, X).
+ --> X = nil^nil
+
+ eval([apply], [add]^2^3^nil, X).
+ --> X = 5^nil
+
+ eval([7, [add], papply], nil, X).
+ --> X = [7,add]^nil
+
+ eval([7, [add], papply, 1, swap, apply], nil, X).
+ --> X = 8^nil
+
+ eval([get(1), swap, -1, add], 3^2^nil, X).
+ --> X = 2^2^2^nil
+
+ eval([add] : (int^int^nil->int^nil), nil, X).
+ --> X = [add]^nil
